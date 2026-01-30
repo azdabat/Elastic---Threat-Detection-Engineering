@@ -1,0 +1,17 @@
+sequence by host.id with maxspan=10m
+
+  [network
+    where event.category == "network"
+      and network.direction == "incoming"
+      and destination.port in (445,135)
+  ]
+
+  [process
+    where event.code == "17"
+      and file.name like "\\\\.\\pipe\\*"
+      and (
+            file.name like "\\\\.\\pipe\\msse-*" or
+            file.name like "\\\\.\\pipe\\sliver*" or
+            file.name like "\\\\.\\pipe\\postex_*"
+          )
+  ]
