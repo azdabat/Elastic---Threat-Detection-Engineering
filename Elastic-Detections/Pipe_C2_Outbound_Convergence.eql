@@ -1,0 +1,20 @@
+sequence by host.id with maxspan=3m
+
+  [process
+    where host.os.type == "windows"
+      and event.code == "17"
+      and file.name like "\\\\.\\pipe\\*"
+      and (
+            file.name like "\\\\.\\pipe\\msse-*" or
+            file.name like "\\\\.\\pipe\\postex_*" or
+            file.name like "\\\\.\\pipe\\sliver*" or
+            file.name like "\\\\.\\pipe\\gruntsvc*"
+          )
+  ]
+
+  [network
+    where event.category == "network"
+      and network.direction == "outgoing"
+      and destination.ip != null
+      and destination.port not in (80,443)
+  ]
