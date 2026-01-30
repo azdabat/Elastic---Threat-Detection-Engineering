@@ -1,0 +1,23 @@
+sequence by host.id with maxspan=5m
+  [process
+    where event.category == "process"
+      and process.name in ("powershell.exe","pwsh.exe")
+      and (
+            process.command_line like "* -enc *" or
+            process.command_line like "* -encodedcommand *"
+          )
+      and (
+            process.command_line like "*frombase64string*" or
+            process.command_line like "*invoke-expression*" or
+            process.command_line like "*downloadstring*" or
+            process.command_line like "*invoke-webrequest*" or
+            process.command_line like "*invoke-restmethod*"
+          )
+  ]
+  [network
+    where event.category == "network"
+      and network.direction == "outgoing"
+      and destination.ip != null
+      and destination.port != null
+      and destination.port not in (80,443)
+  ]
