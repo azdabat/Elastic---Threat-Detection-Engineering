@@ -1,0 +1,14 @@
+process
+where host.os.type == "windows"
+  and event.code == "17"
+  and file.name != null
+  and (
+        file.name like "\\\\.\\pipe\\msse-*" or
+        file.name like "\\\\.\\pipe\\status_*" or
+        file.name like "\\\\.\\pipe\\postex_*" or
+        file.name like "\\\\.\\pipe\\sliver*" or
+        file.name like "\\\\.\\pipe\\gruntsvc*" or
+        file.name like "\\\\.\\pipe\\remcom*" or
+        file.name like "\\\\.\\pipe\\empire*"
+      )
+  and not process.name in ("svchost.exe","services.exe")
